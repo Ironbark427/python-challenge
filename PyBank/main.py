@@ -57,7 +57,17 @@ print("___________________________________")
 print(f"Total Months  : {count} ")
 print(f"Total Revenue : ${total} ")
 print(f"Average Change: ${round(avg, 2)} ")
-print(f"Greatest Increase in Profits: {maxval} on {maxdate}")
-print(f"Greatest Decrease in Profits: {minval} on {mindate}")
+print(f"Greatest Increase in Profits: ${maxval} on {maxdate}")
+print(f"Greatest Decrease in Profits: ${minval} on {mindate}")
 
 # create text file to write answers
+with open("./PyBank/Finances.txt", "w") as file:
+    file.write("         Financial Analysis        \n")
+    file.write("___________________________________\n")
+    file.write(f"Total Months  : {count} \n")
+    file.write(f"Total Revenue : ${total} \n")
+    file.write(f"Average Change: ${round(avg, 2)} \n")
+    file.write(f"Greatest Increase in Profits: ${maxval} on {maxdate}\n")
+    file.write(f"Greatest Decrease in Profits: ${minval} on {mindate}\n")
+
+    file.close
