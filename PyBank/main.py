@@ -5,11 +5,13 @@ import os
 # setting up variables
 count = 0
 total = 0
-valuelist = []
 mydict = {}
 avg = 0
+minval = 0
+maxval = 0
+truth = False
 
-# pull in external data
+# pull in external data (Atom location is relative to project base not file)
 bank_csv = os.path.join("./PyBank/budget_data.csv")
 
 # use os module to read in csv file
@@ -22,26 +24,32 @@ with open(bank_csv, newline="") as csvfile:
     for row in csvreader:
         count += 1  # get total number of months
         total = total + int(row[1])  # get total revenues
-        valuelist.append(int(row[1]))  # create list for evaluation
-        mydict[row[0]] = int(row[1])  # turn csv into dictionary for comparison
+        mydict[row[0]] = int(row[1])
 
-# get min and max values
-    maxvalue = max(valuelist)
-    minvalue = min(valuelist)
-
-    for date, amount in mydict.items():  # iterate through dict
-        if amount == maxvalue:  # to find the maximum maxdate
-            maxdate = date
-        elif amount == minvalue:  # and the mindate
+# iterate through keys and values in dictionary
+    for date, amount in mydict.items():
+        if truth is False:  # setting up first value comparisons
+            prevkey = date
+            prevamt = amount
+            truth = True
+        elif (amount - prevamt) > maxval:  # compare curr and prev vals
+            maxval = amount - prevamt  # setting max val to max num
+            maxdate = date  # curr date not prev date
+            prevkey = date  # resetting prev vals for next compare
+            prevamt = amount
+            avg = avg + maxval  # building total for Average
+        elif (amount - prevamt) < minval:  # basic repeat of maxval chk
+            minval = amount - prevamt
             mindate = date
+            prevkey = date
+            prevamt = amount
+            avg = avg + minval
+        else:  # when chg is less then max and more than min
+            avg = avg + (amount - prevamt)
+            prevkey = date
+            prevamt = amount
 
-    for i in range(count):  # use count for loop through values
-        if(i == 0):
-            pass  # must pass as the first value can't subtract nothing
-        else:
-            avg = avg + (valuelist[i] - valuelist[i-1])  # sum changes
-
-    avg = avg / (count - 1)
+avg = avg / (count - 1)  # get average change
 
 # Yuuumm! Here are the answers!
 print("         Financial Analysis        ")
@@ -49,7 +57,7 @@ print("___________________________________")
 print(f"Total Months  : {count} ")
 print(f"Total Revenue : ${total} ")
 print(f"Average Change: ${round(avg, 2)} ")
-print(f"Greatest Increase in Profits: {maxvalue} on {maxdate}")
-print(f"Greatest Decrease in Profits: {minvalue} on {mindate}")
+print(f"Greatest Increase in Profits: {maxval} on {maxdate}")
+print(f"Greatest Decrease in Profits: {minval} on {mindate}")
 
 # create text file to write answers
